@@ -2,8 +2,13 @@
  * CS 433 Operating Systems -- Fall 2026 -- CSU San Marcos
  * PA1: ptime -- run a command as a child process and time it.
  *
+<<<<<<< HEAD
  * NAME(S): Michael Hernandez, Evan Petersen, and Wes Loewenberg
  * DATE: 9/28/26
+=======
+ * NAME(S): <your name here>   (every member's name if you are working in a group)
+ * DATE:    <date>
+>>>>>>> 8880edbf30335863cf2b077f711b3d4f95d6da16
  * ===========================================================================
  *
  * This file compiles and runs AS GIVEN. Try it first:
@@ -177,6 +182,7 @@ int main(int argc, char *argv[])
                  tv_to_sec(&ru.ru_utime),
                  tv_to_sec(&ru.ru_stime));
 
+<<<<<<< HEAD
     // printf("The clock BEFORE you create the child: %d\n", clock_gettime(CLOCK_MONOTONIC, &t0));
 
     // fflush(stdout);
@@ -189,5 +195,7 @@ int main(int argc, char *argv[])
     //         return PTIME_FAILURE;
     //     }
 
+=======
+>>>>>>> 8880edbf30335863cf2b077f711b3d4f95d6da16
     return PTIME_FAILURE;
 }
