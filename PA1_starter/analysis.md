@@ -1,12 +1,7 @@
 # PA1 Written Analysis
 
-<<<<<<< HEAD
-**Name(s):** Michael Hernandez, Evan Petersen, and Wes Loewenberg
-**Date:** 9/28/26
-=======
-**Name(s):** _(every member's name if you worked in a group)_
-**Date:**
->>>>>>> 8880edbf30335863cf2b077f711b3d4f95d6da16
+**Name(s):** Michael Hernandez, Evan Petersen, Wes Loewenberg, Tikhon Peterson, and Hamzeh Sabatini.  
+**Date:** 9/28/26  
 **Built and tested on:** _(course server, WSL, or VM — say which, and the output of `gcc --version`)_
 
 Answer all five questions, **including every lettered part** — a question with
