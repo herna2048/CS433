@@ -1,2 +1,8 @@
 /C-Code-1
 *.pdf
+PA1_starter/ptime
+PA1_starter/workload/buffer_trap
+PA1_starter/workload/noisy
+PA1_starter/workload/sleeper
+PA1_starter/workload/spin
+PA1_starter/workload/statuser
