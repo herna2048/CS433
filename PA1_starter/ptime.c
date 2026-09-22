@@ -2,13 +2,13 @@
  * CS 433 Operating Systems -- Fall 2026 -- CSU San Marcos
  * PA1: ptime -- run a command as a child process and time it.
  *
-<<<<<<< HEAD
- * NAME(S): Michael Hernandez, Evan Petersen, and Wes Loewenberg
+ * NAME(S): Michael Hernandez, 
+ *          Evan Petersen,
+ *          Wes Loewenberg,
+ *          Tikhon Peterson, 
+ *          Hamzeh Sabatini
+ *          
  * DATE: 9/28/26
-=======
- * NAME(S): <your name here>   (every member's name if you are working in a group)
- * DATE:    <date>
->>>>>>> 8880edbf30335863cf2b077f711b3d4f95d6da16
  * ===========================================================================
  *
  * This file compiles and runs AS GIVEN. Try it first:
@@ -138,64 +138,101 @@ int main(int argc, char *argv[])
      *   clock_gettime(CLOCK_MONOTONIC, &t0);
      *   Check the return value. Why CLOCK_MONOTONIC and not CLOCK_REALTIME?
      *   Question 3 of analysis.md asks you.
-     *
+     */
+    struct timespec t0, t1;     // struct timespec for start t0 and end t1 time
+
+    // Read the clock before creating the child process
+    if (clock_gettime(CLOCK_MONOTONIC, &t0) == -1) {
+        perror("ptime: clock_gettime");
+        return PTIME_FAILURE;
+    }
+
+    /*
      * TODO 2 -- Empty the stdio buffers, then fork().
      *   One function call empties them. Run ./workload/buffer_trap first if
      *   you do not know which one or why (Question 1 of analysis.md).
      *   Handle fork() returning -1.
-     *
-     * TODO 3 -- In the child: execvp(cmd[0], cmd).
+     */
+    fflush(NULL);       // flush all stdio buffers before forking
+    pid_t pid = fork();
+
+    /* Handle fork() failure */
+    if (pid < 0) {
+        perror("Failed to fork!");
+        return PTIME_FAILURE;
+    }
+
+    /* TODO 3 -- In the child: execvp(cmd[0], cmd).
      *   execvp only returns if it FAILED. Save errno immediately, print
      *       ptime: cannot run 'NAME': STRERROR
      *   to stderr, and leave with _exit(127) if errno == ENOENT, otherwise
      *   _exit(126). Use _exit, not exit, and not return.
-     *
-     * TODO 4 -- In the parent: waitpid(pid, &status, 0).
+     */
+    /* In the child process */
+    if (pid == 0) {
+        execvp(cmd[0], cmd);
+
+        /* Only reached if execvp fails */
+        int saved_errno = errno; // Save errno immediately
+        fprintf(stderr, "ptime: cannot run '%s': %s\n", cmd[0], 
+            strerror(saved_errno));
+        
+        if (saved_errno == ENOENT) {
+            _exit(127); // command not found
+        } else {
+            _exit(126); // other execvp failure
+        }
+    }
+
+    /* TODO 4 -- In the parent: waitpid(pid, &status, 0).
      *   waitpid can fail with EINTR if a signal arrives while you wait; that
      *   is not a real error, so retry. Any other failure is fatal.
      *   Then read the clock again, and call
      *       getrusage(RUSAGE_CHILDREN, &ru)
      *   to get the child's user and system CPU time.
-     *
-     * TODO 5 -- Report and propagate.
+     */
+    int status;
+
+    /* Wait for the child process to finish */
+    while (waitpid(pid, &status, 0) < 0) {
+        if (errno == EINTR) {
+            continue;       // A signal interrupted waitpid, retry (continue)
+        }
+        else {
+            perror("waitpid failed");
+            return PTIME_FAILURE;
+        }
+    }
+
+    if (clock_gettime(CLOCK_MONOTONIC, &t1) != 0) {
+        perror("ptime: clock_gettime");
+        return PTIME_FAILURE;
+    }
+
+    struct rusage ru;
+    if (getrusage(RUSAGE_CHILDREN, &ru) != 0) {
+        perror("ptime: getrusage");
+        return PTIME_FAILURE;
+    }
+
+    /* TODO 5 -- Report and propagate.
      *   Call print_report(stderr, cmd, pid, status, wall, user, sys).
      *   Then return the child's exit code, or 128 + signal number if the
      *   child was killed by a signal. This is what your shell does, which is
      *   why `echo $?` after a Ctrl-C shows 130.
      * --------------------------------------------------------------- */
+    double wall = ts_to_sec(&t1) - ts_to_sec(&t0);
+    double user = tv_to_sec(&ru.ru_utime);
+    double sys  = tv_to_sec(&ru.ru_stime);
 
-    fprintf(stderr, "ptime: STUB -- no child was created. "
-                    "The report below is a placeholder.\n");
+    print_report(stderr, cmd, pid, status, wall, user, sys);
 
-    /* Placeholder values so the stub compiles and runs. Once your fork/exec/
-     * wait code is in place, t0 and t1 come from clock_gettime() and ru comes
-     * from getrusage(); the three lines that call print_report stay as they
-     * are. Converting the structs to seconds is boilerplate -- it is done for
-     * you here so you can spend your time on the process lifecycle. */
-    struct timespec t0 = {0, 0}, t1 = {0, 0};
-    struct rusage ru;
-    memset(&ru, 0, sizeof ru);
-    int status = 0;                 /* the wait macros read this as "exited 0" */
+    if (WIFEXITED(status)) {
+        return WEXITSTATUS(status); // Return child's exit code
+    }
+    if (WIFSIGNALED(status)) {
+        return 128 + WTERMSIG(status); // Return 128 + signal number
+    }
 
-    print_report(stderr, cmd, (pid_t)0, status,
-                 ts_to_sec(&t1) - ts_to_sec(&t0),
-                 tv_to_sec(&ru.ru_utime),
-                 tv_to_sec(&ru.ru_stime));
-
-<<<<<<< HEAD
-    // printf("The clock BEFORE you create the child: %d\n", clock_gettime(CLOCK_MONOTONIC, &t0));
-
-    // fflush(stdout);
-
-    // fork();
-
-    // if(fork() == -1)
-    //     {
-    //         printf("Fail");
-    //         return PTIME_FAILURE;
-    //     }
-
-=======
->>>>>>> 8880edbf30335863cf2b077f711b3d4f95d6da16
-    return PTIME_FAILURE;
+    return PTIME_FAILURE; // unreachable failsafe return!
 }
