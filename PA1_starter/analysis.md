@@ -33,13 +33,28 @@ Run the first command in a real terminal (an ssh session or a WSL shell), not fr
 
 **(a)** Paste both outputs exactly as you got them.
 
-**(b)** They are different, and the program did not change. Explain why, in
-terms of where `printf` actually writes and what `fork()` copies.
+Terminal run:
+```bash
+A: printed before fork()
+B: child
+C: parent
+```
+Piped run:
+```bash
+A: printed before fork()
+B: child
+A: printed before fork()
+C: parent
+```
+**(b)** They are different, and the program did not change. Explain why, in terms of where `printf` actually writes and what `fork()` copies.
+
+_printf writes to a stdio buffer in the process, not directly to the kernel. With a pipe, line A can still be in the buffer at fork(). fork() copies that buffer to parent and child. Both flush on exit, so A can print twice._
+
 
 **(c)** Name the one library call that fixes it, say exactly where it goes in
 `ptime.c`, and explain why placing it *after* the `fork()` would not work.
 
-_Your answer:_
+_fflush(NULL) in ptime.c after clock_gettime, before fork(). Flush after fork() does not clear the child's copy of the buffer._
 
 
 ---
@@ -54,13 +69,45 @@ Run both of these with your finished `ptime` and paste both reports:
 ```
 
 **(a)** For each one, say which is larger — wall, or user+sys — and why.
+```bash
+sleeper: slept 1000 ms
+=== ptime ===
+command : ./workload/sleeper 1000
+pid     : 5109
+status  : exited 0
+wall    : 1.007 s
+user    : 0.000 s
+sys     : 0.001 s
+```
+```bash
+spin: burned 1000 ms of CPU (checksum 152440000)
+=== ptime ===
+command : ./workload/spin 1000
+pid     : 5113
+status  : exited 0
+wall    : 1.003 s
+user    : 0.923 s
+sys     : 0.013 s
+```
+_Sleeper: wall (1.007 s) >> user+sys (0.001 s), mostly sleeping.  
+Spin: wall (1.003 s) ≈ user+sys (0.936 s), CPU-bound._
 
 **(b)** A program can finish with `user + sys` *greater* than `wall`. Describe
 a program that would do that. (None of the provided workload programs on its own will do it; say what
 kind of program would, and what hardware makes it possible. You can check your answer with
 `./ptime sh -c "./workload/spin 500 & ./workload/spin 500 & wait"`.)
-
-_Your answer:_
+```bash
+spin: burned 500 ms of CPU (checksum 80540000)
+spin: burned 500 ms of CPU (checksum 80780000)
+=== ptime ===
+command : sh -c ./workload/spin 500 & ./workload/spin 500 & wait
+pid     : 5116
+status  : exited 0
+wall    : 0.506 s
+user    : 0.982 s
+sys     : 0.012 s
+```
+_Two spin processes on a multi-core CPU in parallel. user+sys (0.994 s) > wall (0.506 s)._
 
 
 ---
@@ -71,13 +118,13 @@ You used `CLOCK_MONOTONIC`. `CLOCK_REALTIME` also exists, and it reports the
 wall-clock time of day.
 
 **(a)** Describe a concrete situation in which measuring an interval with
-`CLOCK_REALTIME` would give a wrong answer — including one where the measured
-duration comes out *negative*.
+`CLOCK_REALTIME` would give a wrong answer — including one where the measured duration comes out *negative*.
 
-**(b)** Given that, why does `CLOCK_REALTIME` exist at all? Name one job it is
-right for and `CLOCK_MONOTONIC` is wrong for.
+_CLOCK_REALTIME can jump if NTP or an admin changes the system clock. end − start can be wrong or negative. CLOCK_MONOTONIC only counts forward, good for intervals._
 
-_Your answer:_
+**(b)** Given that, why does `CLOCK_REALTIME` exist at all? Name one job it is right for and `CLOCK_MONOTONIC` is wrong for.
+
+_CLOCK_REALTIME for time-of-day (logs, timestamps). CLOCK_MONOTONIC is not calendar time._
 
 
 ---
