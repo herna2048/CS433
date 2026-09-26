@@ -180,29 +180,29 @@ why. `perror()` is acceptable; a bare `printf("error\n")` is not.
 
 ### 4.5 REQUIRED — the checklist
 
-- [ ] `ptime COMMAND [ARG]...` runs the command as a **child process**, using
+- [x] `ptime COMMAND [ARG]...` runs the command as a **child process**, using
       `fork()` and `execvp()`. The parent does not exec.
-- [ ] The parent waits for **that specific child** with `waitpid()`.
-- [ ] The child's stdout and stderr pass through untouched.
-- [ ] The seven-line report is printed to **stderr**, in the exact given format.
-- [ ] `status` correctly distinguishes a normal exit from death by a signal,
+- [x] The parent waits for **that specific child** with `waitpid()`.
+- [x] The child's stdout and stderr pass through untouched.
+- [x] The seven-line report is printed to **stderr**, in the exact given format.
+- [x] `status` correctly distinguishes a normal exit from death by a signal,
       using `WIFEXITED` / `WEXITSTATUS` / `WIFSIGNALED` / `WTERMSIG`.
-- [ ] `wall` comes from `clock_gettime(CLOCK_MONOTONIC, ...)`, sampled just
+- [x] `wall` comes from `clock_gettime(CLOCK_MONOTONIC, ...)`, sampled just
       before `fork()` and just after `waitpid()` returns.
-- [ ] `user` and `sys` come from `getrusage(RUSAGE_CHILDREN, ...)`.
-- [ ] `ptime`'s own exit code follows the table in §4.3.
-- [ ] All stdio buffers are flushed immediately before `fork()` (order: read the clock, flush, fork — the flush is inside the timed interval and costs microseconds), with a comment
+- [x] `user` and `sys` come from `getrusage(RUSAGE_CHILDREN, ...)`.
+- [x] `ptime`'s own exit code follows the table in §4.3.
+- [x] All stdio buffers are flushed immediately before `fork()` (order: read the clock, flush, fork — the flush is inside the timed interval and costs microseconds), with a comment
       in the code saying why.
-- [ ] The child uses `_exit()`, never `exit()` and never `return`.
-- [ ] All the failure cases in §4.4 are handled.
-- [ ] Compiles with the Makefile's flags, `gcc -Wall -Wextra -pthread -std=c11 -O2` (i.e. `make clean && make`), and **zero warnings**.
-- [ ] `make test` prints `all tests passed` (14 of 14).
-- [ ] `analysis.md` is complete, in your own words, with real pasted output.
-- [ ] The code is readable: consistent indentation, lines under about 100
+- [x] The child uses `_exit()`, never `exit()` and never `return`.
+- [x] All the failure cases in §4.4 are handled.
+- [x] Compiles with the Makefile's flags, `gcc -Wall -Wextra -pthread -std=c11 -O2` (i.e. `make clean && make`), and **zero warnings**.
+- [x] `make test` prints `all tests passed` (14 of 14).
+- [x] `analysis.md` is complete, in your own words, with real pasted output.
+- [x] The code is readable: consistent indentation, lines under about 100
       columns, no leftover debug printing, and a short comment at each place
       where the *why* is not obvious (the flush, `_exit`, the `EINTR` retry,
       the fact that `execvp` does not return on success).
-- [ ] `README.md` is **yours** — your name(s), how to build, and anything you
+- [x] `README.md` is **yours** — your name(s), how to build, and anything you
       cited. The starter ships a `README.md` explaining the kit; replace it.
 
 ### 4.6 Where the 100 points are
