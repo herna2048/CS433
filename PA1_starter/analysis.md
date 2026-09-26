@@ -2,7 +2,7 @@
 
 **Name(s):** Michael Hernandez, Evan Petersen, Wes Loewenberg, Tikhon Peterson, and Hamzeh Sabatini.  
 **Date:** 9/28/26  
-**Built and tested on:** _(course server, WSL, or VM — say which, and the output of `gcc --version`)_
+**Built and tested on:** _course server and on WSL Ubuntu gcc 13.3.0_
 
 Answer all five questions, **including every lettered part** — a question with
 (a), (b) and (c) is not answered until all three are. Two to four sentences per
@@ -136,12 +136,28 @@ and never `return`.
 
 **(a)** What does `exit()` do that `_exit()` does not?
 
+_exit() does peforms user-space cleanup before it terminates whereas _exit() skips that step and just teminates._
+
 **(b)** Connect this to Q1. Suppose `ptime` also printed a line to stdout before `fork()` (a debug line, say). Describe the specific wrong output a student would see if they used `exit()` in the child and had also skipped the fix from Q1. Pasting a real run is the best answer.
+```bash
+./ptime thiscommanddoesnotexist
+Line before forking...
+ptime: cannot run 'thiscommanddoesnotexist': No such file or directory
+=== ptime ===
+command : thiscommanddoesnotexist
+pid     : 58562
+status  : exited 127
+wall    : 0.004 s
+user    : 0.000 s
+sys     : 0.002 s
+
+Using exit
+```
 
 **(c)** In a program larger than this one, why is `return` from `main()` in the
 child worse still?
 
-_Your answer:_
+_Since it is the same as using exit(). It also crashes the parent process, allowing the child to keep running._
 
 
 ---
@@ -154,13 +170,38 @@ You called `getrusage(RUSAGE_CHILDREN, &ru)` once, after `waitpid` returned.
 calling `getrusage(RUSAGE_CHILDREN, ...)` after each one. What would the third
 call report — that run's CPU time, or something else? Say precisely what.
 
+_No, it would report the accumilated CPU times of all 3 childs rather than just the third child, as getrusage() doesn't reset and just accumulates._
+
 **(b)** Give a correct way to get *per-run* CPU time out of `RUSAGE_CHILDREN`
 anyway.
+
+_In order to get the per-run CPU time, you would have to save each child after each iteration._
+
+```c
+struct rusage ru;
+struct rusage runs[NUM_RUNS];
+for(int i = 0; i < NUM_RUNS; i++){
+    while (waitpid(pid, &status, 0) < 0) {
+        if (errno == EINTR) {
+            continue;
+        }
+        else {
+            perror("waitpid failed");
+            return PTIME_FAILURE;
+        }
+    }
+    if (getrusage(RUSAGE_CHILDREN, &ru) != 0) {
+        perror("ptime: getrusage");
+        return PTIME_FAILURE;
+    }
+    runs[i] = ru;
+}
+```
 
 **(c)** What would `getrusage(RUSAGE_SELF, ...)` have reported instead, and
 roughly what number would you have seen in your report?
 
-_Your answer:_
+_Instead of the reaped child, it reports the parent instead. As self is hardly moving as the child's data is not being placed inside, it would be a fraction of a milisecond._
 
 
 ---
