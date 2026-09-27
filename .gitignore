@@ -6,3 +6,9 @@ PA1_starter/workload/noisy
 PA1_starter/workload/sleeper
 PA1_starter/workload/spin
 PA1_starter/workload/statuser
+PA1/ptime
+PA1/workload/noisy
+PA1/workload/sleeper
+PA1/workload/spin
+PA1/workload/statuser
+PA1/workload/buffer_trap
