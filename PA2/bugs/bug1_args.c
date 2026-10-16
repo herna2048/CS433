@@ -9,8 +9,11 @@
 #include <pthread.h>
 #include <stdio.h>
 
+
+// Defines the number of threads
 #define N 4
 
+// Reads that specific threads index from the pointer it was given then prints it
 static void *show(void *arg)
 {
     int id = *(int *)arg;
@@ -18,18 +21,22 @@ static void *show(void *arg)
     return NULL;
 }
 
+
 int main(void)
 {
+    // t holds the thread handles
+    // ids holds the thread indexes
     pthread_t t[N];
     int ids[N];
 
-    
+
+    // each thread -> store its index in ids[i] -> pass the address of ids[i] to show
     for (int i = 0; i < N; i++) {
         ids[i] = i;
         pthread_create(&t[i], NULL, show, &ids[i]);
     }
     
-    
+    // wait for all threads to finish
     for (int i = 0; i < N; i++) {
         pthread_join(t[i], NULL);
     }
