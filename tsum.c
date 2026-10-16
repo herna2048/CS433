@@ -129,7 +129,7 @@ static int run_once(double *x, long n, int nthreads,
     free(tid);
 
     // a failed join means some partials may not be valid, so quit
-    if (failed) {
+    if (failed == 0) {
         free(args);
         return 1;
     }
