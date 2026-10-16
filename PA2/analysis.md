@@ -40,16 +40,16 @@ Plugged in, or on battery:
 
 | threads | fill_s | sum_s | wall_s | sum-phase speedup | whole-program speedup |
 |---|---|---|---|---|---|
-| 1 | | | | 1.00 | 1.00 |
-| 2 | | | | | |
-| 4 | | | | | |
-| 8 | | | | | |
-|  (cores) | | | | | |
+| 1 |0.4788|1.8745|2.3533 | 1.00 | 1.00 |
+| 2 |0.4760 |0.9383 |1.4143 |1.9978 |1.6640 |
+| 4 |0.4761 |0.4625 |0.9386 |4.0530 |2.5072 |
+| 8 |0.5008 |0.2993 |0.8000 |6.2629 |2.9416 |
+|  (cores) 20 |0.4778 |0.2221 |0.6999 |8.4399 | 3.3623|
 
 ### The serial fraction
 
-- S = fill_s / wall_s at one thread =
-- Amdahl ceiling = 1 / S =
+- S = fill_s / wall_s at one thread = .2035
+- Amdahl ceiling = 1 / S = 4.9150
 
 ### The four questions
 
