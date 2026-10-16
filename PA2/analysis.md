@@ -65,8 +65,8 @@ speedup? Which one would a user of this program notice?**
 Because it mainly relies on parallell processing while whole-program speedup includes the serial processing of the machine
 
 **4. Why does `total` change in its last digits when the thread count changes,
-and why is that not a bug?
----
+and why is that not a bug?**
+
 The last digits in total change due to floating point addition which is not perfect on computers. This is not a bug because we can ignore these last digits in our final analysis
 
 ## Stretch (only if you did it)
