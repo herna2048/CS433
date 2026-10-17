@@ -12,9 +12,9 @@ Defect: main summed the slots without waiting for the threads, so it read them b
 Fix: I added a pthread_join for every thread before the summing loop, so every slot is complete when main reads it.
 
 ## bug3_stack.c
-Defect:
-Fix:
+Defect: compute was returning the address of a local variable, so when the thread was destroyed, the information was lost, creating a seg fault.
+Fix: I added a dynamic array that returned the address of the memory from the calculation so ret had a valid pointer pointing to a long.
 
 ## bug4_errno.c
-Defect:
-Fix:
+Defect: pthread_create and join were checking for an error case that doesn't exist for threads, and if it were to return an error, it would return a success case as errno doesn't get updated.
+Fix: I created variables to store the return values from create and join, then use them to see if they had failed and use them in the error message instead of errno.
