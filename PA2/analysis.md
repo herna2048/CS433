@@ -1,8 +1,9 @@
 # PA2 analysis — <your name>
 
-Group members (all names, or write "working alone"):
-Anyone outside your group you discussed this with:
-AI assistance (tool, and what you used it for; write "none" if none):
+Group members:  
+Michael Hernandez, Evan Petersen, Wes Loewenberg, Tikhon Peterson, and Hamzeh Sabatini.  
+Anyone outside your group you discussed this with: N/A  
+AI assistance (tool, and what you used it for; write "none" if none): Our group agreed to avoid generative AI for generating completed code/solutions. Using it as a reference and Google search alternative for information or quick documentation lookup is OK.
 
 ---
 
@@ -10,12 +11,12 @@ AI assistance (tool, and what you used it for; write "none" if none):
 
 **System 1**
 
-- Machine and OS:
-- Command used to count threads:
-- Threads before the pthread_create calls:
-- Threads after:
-- Difference:
-- Does the difference match the number you asked for?
+- Machine and OS: WSL Ubuntu gcc 13.3.0
+- Command used to count threads: `ls /proc/$(pgrep -n tcount)/task | wc -l`
+- Threads before the pthread_create calls: 1
+- Threads after: 5
+- Difference: 4
+- Does the difference match the number you asked for?: Yes, I asked for 4 threads and the count went up by exactly 4.
 
 **System 2** (optional but recommended — the course server and your laptop)
 
@@ -53,20 +54,16 @@ Plugged in, or on battery:
 
 ### The four questions
 
-**1. Your measured S, and the ceiling it implies.**
+**1. Your measured S, and the ceiling it implies.**  
 The measured S implies that 20.35% of the machine is serial processing and cannot be sped up by adding more threads. The ceiling implies that the maximum speed up we can reach is x4.9140
 
-**2. What whole-program speedup did you actually reach at the core count? How
-far below the ceiling, and one reason for the gap.**
+**2. What whole-program speedup did you actually reach at the core count? How far below the ceiling, and one reason for the gap.**  
 The core count whole-program speed up was at 3.3623, which is 1.292 below the ceiling. One possible reason for this gap is the need for thread overhead and management as well as limitations on memory bandwidth as the threads are all waiting on their turn for memeory access.
 
-**3. Why is the sum-phase speedup so much better than the whole-program
-speedup? Which one would a user of this program notice?**
+**3. Why is the sum-phase speedup so much better than the whole-program speedup? Which one would a user of this program notice?**  
 Because it mainly relies on parallell processing while whole-program speedup includes the serial processing of the machine
 
-**4. Why does `total` change in its last digits when the thread count changes,
-and why is that not a bug?**
-
+**4. Why does `total` change in its last digits when the thread count changes, and why is that not a bug?**  
 The last digits in total change due to floating point addition which is not perfect on computers. This is not a bug because we can ignore these last digits in our final analysis
 
 ## Stretch (only if you did it)
