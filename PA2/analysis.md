@@ -24,8 +24,7 @@ AI assistance (tool, and what you used it for; write "none" if none): Our group 
 - Command used:
 - Before / after / difference:
 
-**One-to-one or many-to-one?** Two sentences. Say what you would have seen
-instead if the mapping were many-to-one.
+**One-to-one or many-to-one?** The kernel's own thread list grew by 4 when I created 4 Pthreads, so every Pthread is its own kernel-schedulable entity (i.e. one-to-one). If the mapping were many-to-one, the kernel would have seen a single thread the whole time, so the count would have stayed at 1 before and after, with a difference of 0.
 
 ---
 
