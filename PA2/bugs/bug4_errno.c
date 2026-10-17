@@ -40,10 +40,13 @@ static void *idle(void *arg)   { (void)arg; return NULL; }
  * exactly as pthread_create would. */
 static int create_worker(pthread_t *t, void *(*fn)(void *), void *arg)
 {
+    // doesn't use answer
     if (getenv("CS433_FAIL_CREATE") != NULL) {
         int rc = pthread_create(t, NULL, idle, NULL);
         return (rc == 0) ? EAGAIN : rc;
     }
+
+    // uses answer's address
     return pthread_create(t, NULL, fn, arg);
 }
 
@@ -53,14 +56,23 @@ int main(void)
     void *ret = NULL;
     long result = -1;                  /* -1 means: nothing was received */
 
-    if (create_worker(&t, worker, NULL) == -1) {
-        fprintf(stderr, "bug4: create_worker failed: %s\n", strerror(errno));
+    // need to create new variable for the strerror as errno does not update
+    int rc = create_worker(&t, worker, NULL);
+
+
+    //Check if it is not a success; if not, then exit
+    if (rc != 0) {
+        fprintf(stderr, "bug4: create_worker failed: %s\n", strerror(rc));
         return 1;
     }
     printf("thread created with no error\n");
 
-    if (pthread_join(t, &ret) == -1) {
-        fprintf(stderr, "bug4: pthread_join failed: %s\n", strerror(errno));
+    // need to create new variable for the strerror as errno does not update
+    int join_rc = pthread_join(t, &ret);
+
+    //Check if it is not a success; if not, then exit
+    if (join_rc != 0) {
+        fprintf(stderr, "bug4: pthread_join failed: %s\n", strerror(join_rc));
         return 1;
     }
     if (ret != NULL) result = *(long *)ret;
